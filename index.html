@@ -1,57 +1,574 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html>
   <head>
-    <meta charset="UTF-8">
-    <title>Mapedia by jackie7771231</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple markers</title>
+    <link rel="stylesheet" type="text/css" href="https://googledrive.com/host/0B17VEgsJHrneY2Z1VXl0YTluWmc" media="screen"/>
+    <style>
+
+      .controls {
+        margin-top: 16px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #pac-input {
+        background-color: #fff;
+        padding: 0 11px 0 13px;
+        width: 400px;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        text-overflow: ellipsis;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+        margin-left: -1px;
+        padding-left: 14px;  /* Regular padding-left + 1. */
+        width: 401px;
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+
+      #type-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        padding: 5px 11px 0px 11px;
+      }
+
+      #type-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+}
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+    <script>
+    
+    //取得網址列參數
+    function  request(paramName)  
+    {  
+        //获取URL的字符串  
+        var sSource=String(window.document.location);  
+        var sName= paramName;    
+        var sReturn="";     
+        var sQUS="?";     
+        var sAMP="&";     
+        var sEQ="=";     
+        var iPos;  
+      
+        //获取sSource中的"?"，无则返回 -1  
+        iPos=sSource.indexOf(sQUS);  
+        if(iPos==-1)   
+            return;   
+          
+        //汲取参数，从iPos位置到sSource.length-iPos的位置，  
+        //若iPos = -1，则：从-1 到 sSource.length+1  
+        var strQuery=sSource.substr(iPos,sSource.length-iPos);   
+      
+        // alert(strQuery);   
+        //先全部转换为小写  
+        var   strLCQuery = strQuery.toLowerCase();     
+        var   strLCName  = sName.toLowerCase();   
+      
+        //从子字符串strLCQuery中查找“?”、参数名，以及“=”，即“?参数名=”  
+        iPos   = strLCQuery.indexOf(sQUS + strLCName + sEQ);  
+        //alert(iPos);  
+        //如果不存在  
+        if(iPos == -1)     
+        {     
+            //继续查找可能的后一个参数，即带“&参数名=”  
+            iPos = strLCQuery.indexOf(sAMP + strLCName + sEQ);     
+        }  
+      
+        //判断是否存在参数  
+        if(iPos != -1)  
+        {      
+            sReturn = strQuery.substr(iPos + sName.length + 2,strQuery.length-(iPos + sName.length + 2));     
+            var iPosAMP = sReturn.indexOf(sAMP);     
+            if (iPosAMP == -1)  
+            {  
+                return   sReturn;     
+            }  
+            else  
+            {     
+                sReturn = sReturn.substr(0,iPosAMP);     
+            }     
+        }  
+        return   sReturn;   
+    }
+    
+    
+   
+    
+    var map;
+    var infowindow = new google.maps.InfoWindow({ });
+    var s_time     = [];
+    var s_location = [];
+    var s_seq      = [];
+    var s_lat      = [];
+    var s_lng      = [];
+    var s_remark   = [];
+    var s_tran     = [];
+    var s_kind     = [];
+    var s_day      = "";
+    var s_type     = "";
+    if(request("day_tag") != null ) s_day = request("day_tag");
+    if(request("eat_tag") != null ) s_type= request("eat_tag");
+    
+    //http://imgur.com/9ltSWci
+    
+    
+    //travel
+    var image = {
+      url: 'http://i.imgur.com/YRCzrue.png',
+      size: new google.maps.Size(32, 37),
+      origin: new google.maps.Point(0,0),
+      anchor: new google.maps.Point(16, 0)
+    };
+    
+    //food
+    var image3 = {
+      url: 'http://i.imgur.com/cJoDtNZ.png',
+      size: new google.maps.Size(32, 37),
+      origin: new google.maps.Point(0,0),
+      anchor: new google.maps.Point(16, 0)
+    };
+        
+    
+    var shape = {
+        coords: [4, 3, 4, 29, 9, 30, 16 , 34, 29,29,29,4],
+        type: 'poly'
+    };
+    function test(json) {
+      var a = json.feed.entry.length;
+      var j = -1;
+      for (var i = 0; i < a; i++) {
+        //b[i] = json.feed.entry[i].content.$t
+        var c = json.feed.entry[i].title.$t.substring(0,1)
+        if(c=='A'){
+        	j++;
+          s_time[j] = json.feed.entry[i].content.$t;
+        }
+        if(c=='B')
+          s_location[j] = json.feed.entry[i].content.$t;
+        if(c=='C')
+          s_seq[j] = json.feed.entry[i].content.$t;
+        if(c=='D')
+          s_lat[j] = json.feed.entry[i].content.$t;
+        if(c=='E')
+          s_lng[j] = json.feed.entry[i].content.$t;
+        if(c=='F')
+          s_tran[j] = json.feed.entry[i].content.$t;
+        if(c=='G')
+          s_remark[j] = json.feed.entry[i].content.$t;
+        if(c=='H')
+          s_kind[j] = json.feed.entry[i].content.$t;
+      }
+
+      //document.write("<br>TIME=========="+s_time[1]);
+      //document.write("<br>s_location=========="+s_location[1]);
+      //document.write("<br>seq=========="+s_seq[1]);
+      //document.write("<br>lat=========="+s_lat[1]);
+      //document.write("<br>lng=========="+s_lng[1]);
+      //document.write("<br>s_time.length==="+s_time.length);
+    }
+	
+
+    function initialize() 
+    {
+      var mapOptions = {
+        zoom: 11,
+        center:new google.maps.LatLng(35.5493932,139.77983859999995)
+      }
+      map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions,{
+      	mapTypeId: google.maps.MapTypeId.ROADMAP,
+      });
+      document.getElementById("seq").value=s_time.length+1;
+      setMarkers(map);
+
+//SEARCH BOX
+      // Create the search box and link it to the UI element.   
+      var markers = [];
+      var input = (document.getElementById('pac-input'));
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+      
+      var searchBox = new google.maps.places.SearchBox((input));
+      // Listen for the event fired when the user selects an item from the
+      // pick list. Retrieve the matching places for that item.
+      google.maps.event.addListener(searchBox, 'places_changed', function() {
+        var places = searchBox.getPlaces();
+      
+        if (places.length == 0) {
+          return;
+        }
+        for (var i = 0, marker2; marker2 = markers[i]; i++) {
+          marker2.setMap(null);
+        }
+      
+        // For each place, get the icon, place name, and location.
+        markers = [];
+        var bounds = new google.maps.LatLngBounds();
+        
+        for (var i = 0, place; place = places[i]; i++) {
+          var image2 = {
+            url: 'http://i.imgur.com/lTKFEwA.png',
+            size: new google.maps.Size(32, 37),
+            origin: new google.maps.Point(0,0),
+            anchor: new google.maps.Point(16, 0)
+          };
+          // Create a marker for each place.
+          var marker2 = new google.maps.Marker({
+            map: map,
+            icon: image2,
+            title: place.name,
+            position: place.geometry.location
+          });
+          //alert(place.geometry.location.lat());
+          markers.push(marker2);
+          bounds.extend(place.geometry.location);
+          document.getElementById("location").value = document.getElementById("pac-input").value;
+          document.getElementById("lat").value = place.geometry.location.lat();
+          document.getElementById("lng").value = place.geometry.location.lng();
+        }
+        map.fitBounds(bounds);
+      });
+      
+      // Bias the SearchBox results towards places that are within the bounds of the
+      // current map's viewport.
+      google.maps.event.addListener(map, 'bounds_changed', function() {
+        var bounds = map.getBounds();
+        searchBox.setBounds(bounds);
+      });
+//SEARCH BOX END
+    }
+    
+    function setMarkers(map) 
+    {
+    	var marker;
+      for (var i = 1; i < s_time.length; i++) 
+      {
+
+        if((s_day=="" || s_day==s_kind[i]) &&
+           (s_type=="" || s_type==s_tran[i]))
+        {
+        	
+        	var myLatLng = new google.maps.LatLng(s_lat[i], s_lng[i]);
+        	
+        	if(s_tran[i]=="B")
+        	{
+            marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                icon: image3,
+                shape: shape,
+                title: s_location[i],
+                zIndex: i
+            });
+          }else{
+            marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                icon: image,
+                shape: shape,
+                title: s_location[i],
+                zIndex: i
+            });
+          }
+          attachSecretMessage(map,marker, s_location[i]);
+        }
+      }
+    }
+    function attachSecretMessage(map,marker,ok) 
+    {
+      infowindow = new google.maps.InfoWindow(
+          { content: ok ,
+            maxwidth:500
+          });
+
+      google.maps.event.addListener(marker, 'click', function() {
+      	if(infowindow!=null)
+      	{
+      	  infowindow.close();
+          infowindow = new google.maps.InfoWindow(
+          { content: ok ,
+            maxwidth:500
+          });
+      	}else{
+          infowindow = new google.maps.InfoWindow(
+          { content: ok ,
+            maxwidth:500
+          });
+      	}
+      	infowindow.open(map,marker);
+      });
+    }
+    function searchmap(lat,lng,i)
+    { 
+      var test = s_location[i];
+      var myLatLng = new google.maps.LatLng(lat, lng);
+
+      //var marker = new google.maps.Marker({
+      //   position: myLatLng,
+      //   map:map
+      //});
+      map.panTo( myLatLng );
+      //map.setZoom(13);
+      //map.centerAndZoom(myLatLng,15);
+
+      infowindow.close();
+      infowindow = new google.maps.InfoWindow(
+      { content: test ,
+        position: myLatLng,
+        map:map,
+        maxwidth:500
+      });
+      infowindow.open(map);
+
+
+    }
+    
+    function resetmap()
+    {
+      var myLatLng = new google.maps.LatLng(35.5493932,139.77983859999995);
+      var marker = new google.maps.Marker({
+           position: myLatLng,
+      });
+      map.panTo( myLatLng );
+      map.setZoom(11);
+      
+      infowindow.close();
+    }
+    
+    function showmap(kind)
+    {
+    	for (var i = 1; i < s_time.length; i++) {
+    		if(s_kind[i]==kind)
+    	    document.write("<span style='width: 130px;display: inline-block;'><a href='javascript:searchmap("+s_lat[i]+", "+s_lng[i]+","+i+")'>"+s_location[i]+"</a></span>");
+    	}
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+    <script src="https://spreadsheets.google.com/feeds/cells/1PALv35hqLAdXcBDHneaE6IzvQnNNl3QEtbJ6H5jKr48/1/public/basic?alt=json-in-script&callback=test"></script>
   </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Mapedia</h1>
-      <h2 class="project-tagline">map information</h2>
-      <a href="https://github.com/jackie7771231/mapedia" class="btn">View on GitHub</a>
-      <a href="https://github.com/jackie7771231/mapedia/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/jackie7771231/mapedia/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+  <body >
+  	<div style="width: 1400px;height: 800px">
+  		<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+      <div name="map-canvas" id="map-canvas" style="width: 890px; height: 800px;float:left;" ></div>
+      <div style="width: 500px;float:right">    
+      	<span style='width: 70px;display: inline-block;'><a href="javascript:resetmap()" >RESET</a></span>
+      	<span style='width: 70px;display: inline-block;'><a href='http://goo.gl/kemzsb' target='_blank'>資料庫</a></span>
+      	<span style='width: 70px;display: inline-block;'><a href='https://goo.gl/wPHv0W' target='_blank'>行程表</a></span>
+        <div id="tabsF">
+          <ul>
+            <li id="current"><a href="javascript://" onclick="loadTab(this,1);"><span>標籤</span></a></li>
+            <li><a href="javascript://" onclick="loadTab(this,2);"><span>查詢維護</span></a></li>
+          </ul>
+        </div>
+      	<div id="tabsC">
+      		<div id="S1" style="display:inline;">
 
-    <section class="main-content">
-      <h3>
-<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+               <table width=500px>
+               	<tr>
+               		<td bgcolor=#F79F81 >
+               			第幾天
+               		</td>
+               		<td>
+               		  <select id="day_tag" name="day_tag">
+               		  	<option value="">ALL</option>
+               		  	<option value="1">DAY1</option>
+               		  	<option value="2">DAY2</option>
+               		  	<option value="3">DAY3</option>
+               		  	<option value="4">DAY4</option>
+               		  	<option value="5">DAY5</option>
+               		  	<option value="6">DAY6</option>
+               		  	<option value="7">DAY7</option>
+               		  </select>
+               		</td>  
+               		<td bgcolor=#F79F81 >
+               			類別
+               		</td>
+               		<td>
+               		  <select id="eat_tag" name="eat_tag">
+               		  	<option value="">ALL </option>
+               		  	<option value="A">景點 </option>
+               		  	<option value="B">餐廳 </option>
+               		  </select>
+               		</td> 
+               		<td>
+               			<input type="button" id="button1" name="button1" value="查詢" onclick="gotosearch()">
+               		</td>
+               	</tr>
+               	<tr><td bgcolor=#F79F81 colspan=5>東京-DAY1(6/4)</td></tr>  
+               	<tr><td colspan=5><script>showmap(1)</script></td></tr>  
+               	<tr><td bgcolor=#F79F81 colspan=5>東京-DAY2(6/5)</td><tr>
+               	<tr><td colspan=5><script>showmap(2)</script></td></tr>  
+               	<tr><td bgcolor=#F79F81 colspan=5>東京-DAY3(6/6)</td></tr> 
+               	<tr><td colspan=5><script>showmap(3)</script></td></tr>  
+               	<tr><td bgcolor=#F79F81 colspan=5>東京-DAY4(6/7)</td></tr> 
+               	<tr><td colspan=5><script>showmap(4)</script></td></tr>  
+               	<tr><td bgcolor=#F79F81 colspan=5>東京-DAY5(6/8)</td></tr> 
+               	<tr><td colspan=5><script>showmap(5)</script></td></tr> 
+               	<tr><td bgcolor=#F79F81 colspan=5>東京-DAY6(6/9)</td></tr> 
+               	<tr><td colspan=5><script>showmap(6)</script></td></tr> 
+               	<tr><td bgcolor=#F79F81 colspan=5>東京-DAY7(6/10)</td></tr> 
+               	<tr><td colspan=5><script>showmap(7)</script></td></tr> 
+      	       </table>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here <a href="https://guides.github.com/features/mastering-markdown/">using GitHub Flavored Markdown</a>, select a template crafted by a designer, and publish. After your page is generated, you can check out the new <code>gh-pages</code> branch locally. If you’re using GitHub Desktop, simply sync your repository and you’ll see the new branch.</p>
+      	  </div>  
+      	  <div id="S2" style="display:none;">
+      	    <form action="https://docs.google.com/forms/d/1V4mQsUWhAwOOFbnrnPBt9KgxgvKCpA6PwdUTH1Ka5rc/formResponse" id="form1" name="form1" target="actionframe">
+      	    <!--<form action="https://docs.google.com/forms/d/1gHflobDAYlCL2Z92Mb5_nwVG_372DDtoJT2vVihKHqk/formResponse" id="form1" name="form1" target="actionframe">-->
+      	      <table width=100% >
+      	      	<tr><td bgcolor=#F79F81 colspan="2">景點資料輸入</td></tr> 
+      	      	<tr>
+      	      		<td bgcolor=#DDE2FD >地點名稱：</td>
+      	      		<td>
+      	    	      <input type="text" name="location" id="location" value=""   ><input type="text" name="chk1" id="chk1" value="" style="border-width:0px;font-size:16px;color:red" readonly >
+      	    	      <input type="hidden" name="entry.855153958" value=""  id="entry_855153958" >
+      	      		</td>
+      	      	</tr><tr>
+      	      		<td bgcolor=#DDE2FD >項次：</td>
+      	      		<td>
+      	      			<input type="text" name="seq" id="seq" value="" size="2"  style="border-width:0px;font-size:16px;" readonly >
+      	      			<input type="hidden" name="entry.31602519"  value=""  id="entry_31602519" >
+      	      		</td>
+      	      	</tr><tr>
+      	      		<td bgcolor=#DDE2FD >經度：</td>
+      	      		<td>
+      	      			<input type="text" name="lat" id="lat" value=""   >
+      	      			<input type="hidden" name="entry.1757674640" value=""  id="entry_1757674640" >
+      	      		</td>
+      	      	</tr><tr>
+      	      		<td bgcolor=#DDE2FD >緯度：</td>
+      	      		<td>
+      	      			<input type="text" name="lng" id="lng" value=""   >
+      	      			<input type="hidden" name="entry.1690812210" value=""  id="entry_1690812210" >
+      	      		</td>
+      	      	</tr><tr>
+      	      		<td bgcolor=#DDE2FD >備註：</td>
+      	      		<td>
+      	      			<input type="text" name="remark" id="remark" value=""   >
+      	      			<input type="hidden" name="entry.24757726" value=""  id="entry_24757726" >
+      	      		</td>
+      	      	</tr><tr>
+      	      		<td bgcolor=#DDE2FD >類別：</td>
+      	      		<td>
+      	      			<select name="tran" id="tran">
+      	      				<option value = "A">景點</option>
+      	      				<option value = "B">餐廳</option>
+      	      			</select>
+      	      			<input type="hidden" name="entry.892426724" value=""  id="entry_892426724" >
+      	      		</td>
+      	      	</tr><tr>
+      	      		<td bgcolor=#DDE2FD >第幾天：</td>
+      	      		<td>
+      	      			<select name="kind" id="kind">
+      	      				<option value = "">請選擇</option>
+      	      				<option value = "1">DAY 1</option>
+      	      				<option value = "2">DAY 2</option>
+      	      				<option value = "3">DAY 3</option>
+      	      				<option value = "4">DAY 4</option>
+      	      				<option value = "5">DAY 5</option>
+      	      				<option value = "6">DAY 6</option>
+      	      				<option value = "7">DAY 7</option>
+      	      			</select>
+      	      			<input type="hidden" name="entry.1768868211" value=""  id="entry_1768868211" >
+      	      		</td>
+      	      	</tr>
+      	      </table>
+ 		  	    	
+      	    	<input type="button" name="button" id="button" value="&#25552;&#20132;" onClick="check()">
+      	    </form>
+      	    <iframe width="0" height="0" name="actionframe"></iframe>
+      	  </div>  
+      	</div>
+      </div>
+    </div>  
 
-<h3>
-<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Designer Templates</h3>
+    <script type="text/javascript">
+    
+    	function check()
+    	{
+    		var error_message = '';
+    		if(document.getElementById("location").value=='')
+    		  error_message += '請輸入名稱; ';
+    		if(document.getElementById("kind").value=='')
+    		  error_message += '請輸入第幾天; ';
+    		if(document.getElementById("lat").value=='')
+    		  error_message += '請輸入經度; ';
+    		if(document.getElementById("lng").value=='')
+    		  error_message += '請輸入緯度; ';
+    		
+    		if(error_message.length>0)
+    		{
+    		  alert(error_message);	
+    		  return false;
+    		}else{
+          document.getElementById("entry_855153958" ).value = document.getElementById("location").value;
+          document.getElementById("entry_31602519"  ).value = document.getElementById("seq").value;
+          document.getElementById("entry_1757674640").value = document.getElementById("lat").value;
+          document.getElementById("entry_1690812210").value = document.getElementById("lng").value;
+          document.getElementById("entry_892426724" ).value = document.getElementById("tran").value;
+          document.getElementById("entry_24757726"  ).value = document.getElementById("remark").value;
+          document.getElementById("entry_1768868211").value = document.getElementById("kind").value;
+          document.getElementById("chk1").value ="已新增"+document.getElementById("location").value;
+          document.getElementById("location").value='';
+          document.getElementById("seq"   ).value='';     
+          document.getElementById("lat"   ).value='';     
+          document.getElementById("lng"   ).value='';     
+          document.getElementById("tran"  ).value='';    
+          document.getElementById("remark").value='';  
+          document.getElementById("kind"  ).value='';
+          //document.form1.submit();
+          document.getElementById('form1').submit();
+          
+           myrefresh();
+        }  
+    	}
+      function myrefresh()
+      {
+           setTimeout(function () {location.reload(); }, 1 * 1000);
+      }
+      function loadTab(obj,n)
+      {
+        var layer;
+        eval('layer=\'S'+n+'\'');
+      
+        //將 Tab 標籤樣式設成 Blur 型態
+        var tabsF=document.getElementById('tabsF').getElementsByTagName('li');
+        for (var i=0;i<tabsF.length;i++){
+            tabsF[i].setAttribute('id',null);
+             eval('document.getElementById(\'S'+(i+1)+'\').style.display=\'none\'')
+        }
+      
+        //變更分頁標題樣式
+        obj.parentNode.setAttribute('id','current');
+        document.getElementById(layer).style.display='inline';
+      }
+    
+      function gotosearch()
+      {
+        var url="https://a0ff69a2ee9377145fe76c1d5fc92d340e49c343.googledrive.com/host/0B17VEgsJHrneLXlQOUVqV1V5TWM";
+        
+        location.href=url+"?day_tag="+document.getElementById("day_tag").value
+                              +"&eat_tag="+document.getElementById("eat_tag").value;
+      }
+    
+    
+    </script>
 
-<p>We’ve crafted some handsome templates for you to use. Go ahead and click 'Continue to layouts' to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved.</p>
-
-<h3>
-<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating pages manually</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/#mentioning-users-and-teams" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor’s GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out our <a href="https://help.github.com/pages">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>
-
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/jackie7771231/mapedia">Mapedia</a> is maintained by <a href="https://github.com/jackie7771231">jackie7771231</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
-
-  
   </body>
 </html>

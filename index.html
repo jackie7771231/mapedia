@@ -6,7 +6,6 @@
     <title>Simple markers</title>
     <link rel="stylesheet" type="text/css" href="https://googledrive.com/host/0B17VEgsJHrneY2Z1VXl0YTluWmc" media="screen"/>
     <style>
-
       .controls {
         margin-top: 16px;
         border: 1px solid transparent;
@@ -17,7 +16,6 @@
         outline: none;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
       }
-
       #pac-input {
         background-color: #fff;
         padding: 0 11px 0 13px;
@@ -27,28 +25,32 @@
         font-weight: 300;
         text-overflow: ellipsis;
       }
-
       #pac-input:focus {
         border-color: #4d90fe;
         margin-left: -1px;
         padding-left: 14px;  /* Regular padding-left + 1. */
         width: 401px;
       }
-
       .pac-container {
         font-family: Roboto;
       }
-
       #type-selector {
         color: #fff;
         background-color: #4d90fe;
         padding: 5px 11px 0px 11px;
       }
-
       #type-selector label {
         font-family: Roboto;
         font-size: 13px;
         font-weight: 300;
+      }
+      #Exa1 li{
+        float:right;
+        padding:20px;
+        color:#FFFFFF;
+        background-color:#888888;
+        margin:1px;
+        list-style-type:none;
       }
 }
     </style>
@@ -175,7 +177,6 @@
         if(c=='H')
           s_kind[j] = json.feed.entry[i].content.$t;
       }
-
       //document.write("<br>TIME=========="+s_time[1]);
       //document.write("<br>s_location=========="+s_location[1]);
       //document.write("<br>seq=========="+s_seq[1]);
@@ -184,7 +185,6 @@
       //document.write("<br>s_time.length==="+s_time.length);
     }
 	
-
     function initialize() 
     {
       var mapOptions = {
@@ -196,7 +196,6 @@
       });
       document.getElementById("seq").value=s_time.length+1;
       setMarkers(map);
-
 //SEARCH BOX
       // Create the search box and link it to the UI element.   
       var markers = [];
@@ -258,7 +257,6 @@
     	var marker;
       for (var i = 1; i < s_time.length; i++) 
       {
-
         if((s_day=="" || s_day==s_kind[i]) &&
            (s_type=="" || s_type==s_tran[i]))
         {
@@ -295,7 +293,6 @@
           { content: ok ,
             maxwidth:500
           });
-
       google.maps.event.addListener(marker, 'click', function() {
       	if(infowindow!=null)
       	{
@@ -317,7 +314,6 @@
     { 
       var test = s_location[i];
       var myLatLng = new google.maps.LatLng(lat, lng);
-
       //var marker = new google.maps.Marker({
       //   position: myLatLng,
       //   map:map
@@ -325,7 +321,6 @@
       map.panTo( myLatLng );
       //map.setZoom(13);
       //map.centerAndZoom(myLatLng,15);
-
       infowindow.close();
       infowindow = new google.maps.InfoWindow(
       { content: test ,
@@ -334,8 +329,6 @@
         maxwidth:500
       });
       infowindow.open(map);
-
-
     }
     
     function resetmap()
@@ -354,35 +347,34 @@
     {
     	for (var i = 1; i < s_time.length; i++) {
     		if(s_kind[i]==kind)
-    	    document.write("<span style='width: 130px;display: inline-block;background-color:CCEEFF;'><a href='javascript:searchmap("+s_lat[i]+", "+s_lng[i]+","+i+")'>"+s_location[i]+"</a></span>");
+    	    document.write("<a href='javascript:searchmap("+s_lat[i]+", "+s_lng[i]+","+i+")'  style='text-decoration:none;color:#666666;font-family:微軟正黑體;' ><span style='width: 130px;display: inline-block;background-color:#CCEEFF;padding:2px;margin:4px;'>"+s_location[i]+"</span></a>");
     	}
     }
-
     google.maps.event.addDomListener(window, 'load', initialize);
-
     </script>
     <script src="https://spreadsheets.google.com/feeds/cells/1PALv35hqLAdXcBDHneaE6IzvQnNNl3QEtbJ6H5jKr48/1/public/basic?alt=json-in-script&callback=test"></script>
   </head>
   <body >
-  	<div style="width: 1400px;height: 800px">
-  		<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+  <div style="width: 1400px;height: 800px">
+      <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+
       <div name="map-canvas" id="map-canvas" style="width: 890px; height: 800px;float:left;" ></div>
       <div style="width: 500px;float:right">    
-      	<span style='width: 70px;display: inline-block;'><a href="javascript:resetmap()" >RESET</a></span>
-      	<span style='width: 70px;display: inline-block;'><a href='http://goo.gl/kemzsb' target='_blank'>資料庫1</a></span>
-      	<span style='width: 70px;display: inline-block;'><a href='https://goo.gl/wPHv0W' target='_blank'>行程表</a></span>
-        <div id="tabsF">
-          <ul>
-            <li id="current"><a href="javascript://" onclick="loadTab(this,1);"><span>標籤</span></a></li>
-            <li><a href="javascript://" onclick="loadTab(this,2);"><span>查詢維護</span></a></li>
+        <div id="tabsF" >
+          <ul id="Exa1">
+            <li><a href="javascript://" onclick="loadTab(this,2);" style='text-decoration:none;color:#FFFFFF;font-family:微軟正黑體;' >查詢維護</a></li>
+            <li id="current"><a href="javascript://" onclick="loadTab(this,1);" style='text-decoration:none;color:#FFFFFF;font-family:微軟正黑體;' >標籤</a></li>
           </ul>
+          <a href="javascript:resetmap()"                style='text-decoration:none;font-family:微軟正黑體;padding:5px;' >RESET</a>
+          <a href='http://goo.gl/kemzsb' target='_blank' style='text-decoration:none;font-family:微軟正黑體;padding:5px;' >資料庫1</a>
+          <a href='https://goo.gl/rVWUoU' target='_blank'style='text-decoration:none;font-family:微軟正黑體;padding:5px;' >行程表</a>
         </div>
       	<div id="tabsC">
       		<div id="S1" style="display:inline;">
 
                <table width=500px>
                	<tr>
-               		<td bgcolor=#F79F81 >
+               		<td style='border-right:1px solid #666666;border-bottom:1px solid #666666;font-family:微軟正黑體;color:#FFFFFF;padding:5px;' bgcolor=#008B8B>
                			第幾天
                		</td>
                		<td>
@@ -397,7 +389,7 @@
                		  	<option value="7">DAY7</option>
                		  </select>
                		</td>  
-               		<td bgcolor=#F79F81 >
+               		<td style='border-right:1px solid #666666;border-bottom:1px solid #666666;font-family:微軟正黑體;color:#FFFFFF;padding:5px;' bgcolor=#008B8B>
                			類別
                		</td>
                		<td>
@@ -411,19 +403,20 @@
                			<input type="button" id="button1" name="button1" value="查詢" onclick="gotosearch()">
                		</td>
                	</tr>
-               	<tr><td bgcolor=#F79F81 colspan=5>釜山-DAY1(10/13)</td></tr>  
+<tr><td colspan=5><br></td></tr>  
+               	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>釜山-DAY1(10/13)</td></tr>  
                	<tr><td colspan=5><script>showmap(1)</script></td></tr>  
-               	<tr><td bgcolor=#F79F81 colspan=5>釜山-DAY2(10/14)</td><tr>
+               	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>釜山-DAY2(10/14)</td><tr>
                	<tr><td colspan=5><script>showmap(2)</script></td></tr>  
-               	<tr><td bgcolor=#F79F81 colspan=5>釜山-DAY3(10/15)</td></tr> 
+               	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>釜山-DAY3(10/15)</td></tr> 
                	<tr><td colspan=5><script>showmap(3)</script></td></tr>  
-               	<tr><td bgcolor=#F79F81 colspan=5>釜山-DAY4(10/16)</td></tr> 
+               	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>釜山-DAY4(10/16)</td></tr> 
                	<tr><td colspan=5><script>showmap(4)</script></td></tr>  
-               	<tr><td bgcolor=#F79F81 colspan=5>釜山-DAY5(10/17)</td></tr> 
+               	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>釜山-DAY5(10/17)</td></tr> 
                	<tr><td colspan=5><script>showmap(5)</script></td></tr> 
-               	<tr><td bgcolor=#F79F81 colspan=5>首爾-DAY6(10/18)</td></tr> 
+               	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>首爾-DAY6(10/18)</td></tr> 
                	<tr><td colspan=5><script>showmap(6)</script></td></tr> 
-               	<tr><td bgcolor=#F79F81 colspan=5>首爾-DAY7(10/19)</td></tr> 
+               	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>首爾-DAY7(10/19)</td></tr> 
                	<tr><td colspan=5><script>showmap(7)</script></td></tr> 
       	       </table>
 

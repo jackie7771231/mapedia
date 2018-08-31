@@ -345,9 +345,15 @@
     
     function showmap(kind)
     {
-    	for (var i = 1; i < s_time.length; i++) {
-    		if(s_kind[i]==kind)
-    	    document.write("<a href='javascript:searchmap("+s_lat[i]+", "+s_lng[i]+","+i+")'  style='text-decoration:none;color:#666666;font-family:微軟正黑體;' ><span style='width: 130px;display: inline-block;background-color:#CCEEFF;padding:2px;margin:4px;'>"+s_location[i]+"</span></a>");
+    	for (var i = 1; i < s_time.length; i++) 
+        {
+            if(s_kind[i]==kind)
+            {
+                if(s_tran[i]=="A")
+                    document.write("<a href='javascript:searchmap("+s_lat[i]+", "+s_lng[i]+","+i+")'  style='text-decoration:none;color:#666666;font-family:微軟正黑體;' ><span style='width: 130px;display: inline-block;background-color:#CCEEFF;padding:2px;margin:4px;'>"+s_location[i]+"</span></a>");
+                else
+                    document.write("<a href='javascript:searchmap("+s_lat[i]+", "+s_lng[i]+","+i+")'  style='text-decoration:none;color:#666666;font-family:微軟正黑體;' ><span style='width: 130px;display: inline-block;background-color:#FFF0F5;padding:2px;margin:4px;'>"+s_location[i]+"</span></a>");
+            }
     	}
     }
     google.maps.event.addDomListener(window, 'load', initialize);

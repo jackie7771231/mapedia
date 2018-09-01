@@ -46,7 +46,7 @@
       }
       #Exa1 li{
         float:left;
-        padding:20px;
+        padding:15px;
         color:#666666;
         background-color:#FFFFFF;
         border:3px solid #666666;
@@ -365,8 +365,8 @@
       <div style="width:50%;float:left;">
         <div id="tabsF" >
           <ul id="Exa1">
-            <li id="current"><a href="javascript://" onclick="loadTab(this,1);" style='text-decoration:none;color:#000000;font-family:微軟正黑體;' >標籤</a></li>
-            <li><a href="javascript://" onclick="loadTab(this,2);" style='text-decoration:none;color:#000000;font-family:微軟正黑體;' >維護</a></li>
+            <li id="current" onmouseover="this.style.background ='#F5F5DC';" onmouseout="this.style.background ='#FFFFFF';" ><a href="javascript://" onclick="loadTab(this,1);" style='text-decoration:none;color:#000000;font-family:微軟正黑體;' >標籤</a></li>
+            <li onmouseover="this.style.background ='#F5F5DC';" onmouseout="this.style.background ='#FFFFFF';"><a href="javascript://" onclick="loadTab(this,2);" style='text-decoration:none;color:#000000;font-family:微軟正黑體;' >維護</a></li>
           </ul>
 
           <a href='http://goo.gl/kemzsb' target='_blank' style='text-decoration:none;font-family:微軟正黑體;padding-left:10px;padding-right:10px;padding-top:10px;margin-left:10px;background-color:#666666;color: aliceblue;float: right;border: 2px solid #666666;' >資料庫</a>
@@ -568,7 +568,16 @@
         location.href=url+"?day_tag="+document.getElementById("day_tag").value
                               +"&eat_tag="+document.getElementById("eat_tag").value;
       }
-    
+      
+      function mouseOver()
+      {
+        this.backgroundColor="#000000";
+      }
+        
+      function mouseOut()
+      {
+            
+      }
     
     </script>
 

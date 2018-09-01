@@ -6,16 +6,6 @@
     <title>Simple markers</title>
     <link rel="stylesheet" type="text/css" href="https://googledrive.com/host/0B17VEgsJHrneY2Z1VXl0YTluWmc" media="screen"/>
     <style>
-      .controls {
-        margin-top: 16px;
-        border: 1px solid transparent;
-        border-radius: 2px 0 0 2px;
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        height: 32px;
-        outline: none;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-      }
       #pac-input {
         background-color: #fff;
         padding: 0 11px 0 13px;
@@ -30,9 +20,6 @@
         margin-left: -1px;
         padding-left: 14px;  /* Regular padding-left + 1. */
         width: 401px;
-      }
-      .pac-container {
-        font-family: Roboto;
       }
       #type-selector {
         color: #fff;
@@ -53,6 +40,19 @@
         margin-top:-20px;
         margin-left:5px;
         list-style-type:none;
+      }
+      .controls {
+        margin-top: 16px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+      .pac-container {
+        font-family: Roboto;
       }
       .clear{
     clear:both;
@@ -362,15 +362,19 @@
       <div style="width:50%;float:left;">
         <div name="map-canvas" id="map-canvas" style="height: 900px"></div>
       </div>
-      <div style="width:50%;float:left;">
+      <div style="width:50%;float:left;padding-top: 20px;">
         <div id="tabsF" >
           <ul id="Exa1">
             <li id="current" onmouseover="this.style.background ='#F5F5DC';" onmouseout="this.style.background ='#FFFFFF';" ><a href="javascript://" onclick="loadTab(this,1);" style='text-decoration:none;color:#000000;font-family:微軟正黑體;' >標籤</a></li>
             <li onmouseover="this.style.background ='#F5F5DC';" onmouseout="this.style.background ='#FFFFFF';"><a href="javascript://" onclick="loadTab(this,2);" style='text-decoration:none;color:#000000;font-family:微軟正黑體;' >維護</a></li>
           </ul>
 
+          <a href='https://goo.gl/acu3ba' target='_blank' style='text-decoration:none;font-family:微軟正黑體;padding-left:10px;padding-right:10px;padding-top:10px;margin-left:10px;margin-right: 20px;margin-top: 4px;background-color:#FFCC22;color: #666666;float: right;border: 2px solid #666666;' >GitHub</a>
+            
           <a href='http://goo.gl/kemzsb' target='_blank' style='text-decoration:none;font-family:微軟正黑體;padding-left:10px;padding-right:10px;padding-top:10px;margin-left:10px;margin-right: 20px;margin-top: 4px;background-color:#666666;color: aliceblue;float: right;border: 2px solid #666666;' >資料庫</a>
+          
           <a href='https://goo.gl/rVWUoU' target='_blank'style='text-decoration:none;font-family:微軟正黑體;padding-left:10px;padding-right:10px;padding-top:10px;margin-left:10px;margin-top: 4px;background-color:#666666;color: aliceblue;float: right;border: 2px solid #666666;' >行程表</a>
+            
           <a href="javascript:resetmap()"                style='text-decoration:none;font-family:微軟正黑體;padding-left:10px;padding-right:10px;padding-top:10px;margin-left:10px;margin-top: 4px;background-color:#5599FF;color: aliceblue;float: right;border: 2px solid #666666;' >RESET</a>
         </div>
       	<div id="tabsC" style="border:3px solid #666666;margin:20px;">
@@ -410,8 +414,8 @@
                         <a href="javascript:gotosearch()" style='text-decoration:none;'><span style="width: 50px;height: 50px;font-family:微軟正黑體;color:#000000;padding:10px;background-color: #EEEEEE;border: 1px solid #000000;">查詢</span></a>
                		</td>
                	</tr>
-                <tr><td colspan=5><br></td></tr>  
-               	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>釜山-DAY1(10/13)</td></tr>  
+                <tr><td colspan=5><br></td></tr>
+               	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>釜山-DAY1(10/13)</td></tr>
                	<tr><td colspan=5><script>showmap(1)</script></td></tr>  
                	<tr><td style='font-family:微軟正黑體;color:#000000;border: 2px dotted #666666;font-size:18px;padding:10px;' bgcolor=#F8F8FF colspan=5>釜山-DAY2(10/14)</td><tr>
                	<tr><td colspan=5><script>showmap(2)</script></td></tr>  
